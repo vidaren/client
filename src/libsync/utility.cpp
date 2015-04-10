@@ -28,6 +28,7 @@
 #include <QThread>
 #include <QDateTime>
 #include <QSysInfo>
+#include <QObject>
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 #include <QTextDocument>
 #else
@@ -288,12 +289,12 @@ qint64 Utility::qDateTimeToTime_t(const QDateTime& t)
 
 //TODO change to initializers list  when possible.
 static QList<QPair<QString,quint32> > timeMapping = QList<QPair<QString,quint32> >() <<
-                                                    QPair<QString,quint32>("%1 years",86400*365) <<
-                                                    QPair<QString,quint32>("%1 months",86400*30) <<
-                                                    QPair<QString,quint32>("%1 days",86400) <<
-                                                    QPair<QString,quint32>("%1h",3600) <<
-                                                    QPair<QString,quint32>("%1m",60) <<
-                                                    QPair<QString,quint32>("%1s",1);
+                                                    QPair<QString,quint32>("%n years", 86400*365) <<
+                                                    QPair<QString,quint32>("%n months", 86400*30) <<
+                                                    QPair<QString,quint32>("%n days", 86400) <<
+                                                    QPair<QString,quint32>("%nh", 3600) <<
+                                                    QPair<QString,quint32>("%nm", 60) <<
+                                                    QPair<QString,quint32>("%ns", 1);
                                                     
                                                     
 QString Utility::timeToDescriptiveString(quint64 msecs, quint8 precision, QString separator, bool specific) 
@@ -324,7 +325,7 @@ QString Utility::timeToDescriptiveString(QList<QPair<QString,quint32> > &timeMap
     }
     
     for(QList<QPair<QString,quint32> >::Iterator itr = values.begin(); itr < values.end(); itr++) {
-        retStr = retStr.append((specific || itr == values.end()-1) ? itr->first : "%1").arg(itr->second, (itr == values.begin() ? 1 :2 ), 10, QChar('0'));        
+        retStr = retStr.append((specific || itr == values.end()-1) ? QObject::tr(itr->first.toUtf8().constData(), "", itr->second) : QString::number(itr->second));
         if(itr < values.end()-1) {
             retStr.append(separator);
         }
